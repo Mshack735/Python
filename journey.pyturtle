@@ -1,0 +1,416 @@
+import turtle
+import random
+import time
+
+
+
+#constant declarations
+GRID_UNIT = 50
+GRID_SIZE = 11
+
+HALF_GRID = GRID_SIZE // 2
+    # square = town
+    # circle = fight
+    # arrow = quest marker
+    # turtle = weapon shops
+    # triangle = potion shop
+    # hollow circle = chest
+SPIDER_LOCATIONS = [(1, 1),
+                    (-1, 0),(0,-2)]
+                    
+BOSS = [(0,5)]
+TREASURE_LOCATIONS = [(1, -2),
+                      (-2, -1)]
+STINGER= [(2,4)]
+TOWN_LOCATIONS = [(-2, -2)]
+
+
+WEAPON_SHOPS = [(1, 0)]
+
+
+def combat():
+  if (turtle_x, turtle_y) in BOSS:
+    print('You encounter THE BOSS! are you ready?')
+  else:
+    print('You encounter a raverous Spider! do you wish to fight it?')
+  
+  Fight = str(input('yes/no:'))
+  if Fight == 'yes' or Fight == 'y':
+    #########Battle Code Warrior############
+    global life
+    global gold
+    if (turtle_x, turtle_y) in BOSS:
+      Foe=50
+    elif (turtle_x, turtle_y) in STINGER: 
+      Foe=20
+    elif (turtle_x, turtle_y) in SPIDER_LOCATIONS: 
+      Foe=10
+    While_Loop = 1
+    ###########Battle 1############
+    print('============================================')
+    while While_Loop == 1:
+            
+            
+            Player_Dmg = random.randint(weapon,Weapon)
+            if (turtle_x, turtle_y) in BOSS:
+              Foe_Dmg = random.randint(5, 15)
+            elif (turtle_x, turtle_y) in STINGER: 
+              Foe_Dmg = random.randint(3, 7)
+            elif (turtle_x, turtle_y) in SPIDER_LOCATIONS: 
+              Foe_Dmg = random.randint(1, 5)
+            if Foe >= 0:
+                time.sleep(1)
+                print 'You did', Player_Dmg,'Dmg'
+                Foe = Foe - Player_Dmg # checks health remaining
+                print'Your Foe has ',Foe,'Hp left'
+                print('=============================')
+                time.sleep(0.5)
+                if Foe <= 0:
+                    print('You killed it')
+                    
+                    turtle.color('dark grey')
+                    turtle.shape("circle")
+                    turtle.pu()
+                    turtle.stamp()
+                    turtle.shape("classic")
+                    turtle.color('orange')
+                    gold+=5
+                    print 'you now have', '$'+str(gold),'gold'
+                    
+                    
+                    break
+
+               
+                else:
+                    time.sleep(.5)
+                    if life > 0:
+                        life = life - Foe_Dmg
+                        print 'You took ', Foe_Dmg,'Dmg'
+                        print 'You Have', life, 'Hp left'
+                        print('=============================')
+                        time.sleep(0.5)
+                        
+                        if life <= 0:
+                            print('You died')
+                            exit(0)
+            else:
+                print('You die')
+                life = 0
+                break
+
+
+  elif Fight == 'No':
+    print('You Sprint Frantically away from the spider while it chases  you down!') 
+    
+    
+    
+def treasure():
+  t=random.randint(1,2)
+  if t==1:
+    print("You found sword!")
+    print('It does 5-15 damage')
+    inventory.append('rusty sword')
+  elif t==2:
+    print("You found good leather armor!")
+    print("")
+    inventory.append('leather armor')
+
+def town():
+    print("You entered a town")
+    
+    
+    
+    
+def Weapon_shop():
+  print('=====================================')
+  print('You entered the Weapons shop.')
+  global gold
+  global shop
+  global shop_price
+  shop= ['sharp knife','good shield','potion']
+  shop_price= [25,30,10]
+  shopping= True
+  while shopping==True:
+    print('What would you like to buy?')
+    print('Gold: $'+str(gold))
+    print '================================'
+    print '0.              leave'
+    for x in range(len(shop)):
+      print str(x+1)+'.','$'+str(shop_price[x]),'   ||   ',shop[x]
+    print '================================'
+    choice= int(input('Point at what you want:'))
+    if choice==0:
+      print 'You choose to leave.'
+      print('====================================')    
+      break
+    for x in range(len(shop)):
+   
+      if x == (choice-1):
+        sure=input('Are you sure?:')
+        if sure=='yes' or sure=='y':
+          if gold>= shop_price[x]:
+            gold-shop_price[x]
+            inventory.append(shop[x])
+            print 'You got the',str(shop[x])+'!'
+          elif gold<shop_price[x]:
+            print "Are you trying to make me go bankrupt?"
+            print('===============================')  
+            break
+            
+    stay=input('Would you like to continue?')
+    if stay == 'yes' or stay=='y':
+      shopping= True
+    elif stay== 'no' or stay=='n':
+      shopping = False
+      print 'You left the shop.'
+      print('===============================')  
+      break
+
+    
+    
+    
+#scaled setpos for use with int grid coords
+def grid_setpos(x, y, scale):
+    turtle.setpos((x - 0.5) * scale, (y - 0.5) * scale)
+
+#draw a grid
+def draw_grid(size, unit):
+    for x in range(-size // 2, size // 2 + 1):
+        turtle.pu()
+        turtle.setpos(x * unit, -size // 2 * unit)
+        turtle.pd()
+        turtle.setpos(x * unit, size // 2 * unit)
+
+        turtle.pu()
+        turtle.setpos(-size // 2 * unit, x * unit)
+        turtle.pd()
+        turtle.setpos(size // 2 * unit, x * unit)
+
+#draw the map, iterating over stored global coordinates
+def map_starting_area(size, unit):
+    draw_grid(size, unit)
+
+    # square = town
+    # circle = fight
+    # arrow = quest marker
+    # turtle = weapon shops
+    # triangle = potion shop
+    # hollow circle = chest
+
+    turtle.shape("circle")
+    turtle.pu()
+    
+    
+    for x, y in SPIDER_LOCATIONS:
+        grid_setpos(x, y, unit)
+        turtle.stamp()
+
+    for x, y in TREASURE_LOCATIONS:
+        turtle.pu()
+        grid_setpos(x, y - 0.25, unit)
+        turtle.pd()
+        turtle.circle(unit // 4)
+    
+    
+    turtle.shape("turtle")
+    turtle.pu()
+    
+    for x, y in WEAPON_SHOPS:
+        grid_setpos(x, y, unit)
+        turtle.stamp()
+        
+    turtle.shape("circle")        
+    turtle.color("brown")
+    for x, y in STINGER:
+        grid_setpos(x, y, unit)
+        turtle.stamp()   
+    turtle.color("red")
+
+    turtle.pu()
+    
+    
+    for x, y in BOSS:
+        grid_setpos(x, y, unit)
+        turtle.stamp()
+    
+    turtle.color("black")
+    turtle.shape("square")
+    turtle.pu()
+    
+    for x, y in TOWN_LOCATIONS:
+        grid_setpos(x, y, unit)
+        turtle.stamp()
+turtle.speed('fastest')
+
+map_starting_area(GRID_SIZE, GRID_UNIT)
+
+turtle.color('orange')
+turtle.shape('classic')
+
+
+
+#=====================================================
+
+
+
+print('you continue with your journey')
+print('you leave the protection of your farm and head into the open land but you took your trusty knife with you')
+print('it does 1-10 damage')
+print('you come to a cross road')
+print('hit the [i] key to see money/stats')
+global life_max
+global life
+global weapon
+global Weapon
+global gold
+global inventory
+
+life_max=10
+life = 10
+weapon = 1
+Weapon = 10
+gold = 10
+
+inventory= ['rusty knife','used leather armor']
+
+turtle.showturtle()
+
+turtle_x, turtle_y = 0, 0
+trail=[]
+grid_setpos(0, 0, GRID_UNIT)
+
+while True:
+    print('')
+    if life>life_max:
+      life=life_max
+    trail.append(' '.join([str(turtle_x),str(turtle_y)]))
+    try:
+      del trail[-11]
+    except IndexError:
+      1+1
+    
+    direction = input('Would you like to go north, south, east or west: ').lower()
+    if direction == 'i':
+      print('')
+      print('===================================')
+      print 'Life:' ,str(life)+'/'+str(life_max)
+      print 'Gold:' ,'$'+str(gold)
+      print 'Damage:',str(weapon)+'-'+str(Weapon)
+      print('')
+      print('Inventory:')
+      print '---------------------------------'
+      
+      
+      
+      def inventories():
+        try:
+          print(inventory[x+1])
+        except IndexError:
+          print('')
+      for x in range(len(inventory)):
+        print str(x+1), inventory[x]
+      def itemselect():
+        global weapon
+        global Weapon
+        global life_max
+        choice=int(input('What do you want to equip \n enter 0 to exit:'))
+
+        for item in inventory:
+          
+          if item == 'sharp knife':
+            print 'you equiped the', item
+            weapon=10
+            Weapon=20
+            print 'it does',str(weapon)+'-'+str(Weapon), 'damage'
+          
+          elif item == 'rusty knife':
+            print 'you equiped the', item
+            weapon=1
+            Weapon=10
+            print 'it does',str(weapon)+'-'+str(Weapon), 'damage'
+          
+          elif item == 'used leather armor':
+            print 'you equiped the leather armor', item
+            life_max=10
+            print'armor now is',str(life)+'/'+str(life_max)
+            
+          elif item == 'leather armor':
+            print 'you equiped the leather armor', item
+            life_max=15
+            print'armor now is',str(life)+'/'+str(life_max)
+          
+          elif item == 'rusty sword':
+            print 'you equiped the', item
+            weapon=5
+            Weapon=15
+            print 'it does',str(weapon)+'-'+str(Weapon), 'damage'
+
+          elif item == 'potion':
+            print 'you used the', item
+            life+=15
+            if life>life_max:
+              life=life_max
+            print 'health now is',str(life)+'/'+str(life_max)
+            
+          elif item == 'good shield':
+            print 'you equiped the', item
+            life_max=25
+            
+          elif choice == 0:
+            break
+ 
+      inventories()        
+      itemselect()    
+          
+        
+      print '---------------------------------'
+      
+      print('===================================')
+      continue
+    if direction == 'north' or direction== 'n':
+        if turtle_y < HALF_GRID:
+            turtle_y += 1
+        else:
+            print("You hit a wall")
+
+    elif direction == 'south' or direction== 's':
+        if turtle_y > -HALF_GRID:
+            turtle_y -= 1
+        else:
+            print("You hit a wall")
+
+    elif direction == 'east' or direction== 'e':
+        if turtle_x < HALF_GRID:
+            turtle_x += 1
+        else:
+            print("You hit a wall")
+
+    elif direction == 'west' or direction== 'w':
+        if turtle_x > -HALF_GRID:
+            turtle_x -= 1
+        else:
+            print("You hit a wall")
+
+    elif direction == 'quit':
+        break
+
+    grid_setpos(turtle_x, turtle_y, GRID_UNIT)
+    if (turtle_x, turtle_y) in STINGER:
+        combat()
+    if (turtle_x, turtle_y) in SPIDER_LOCATIONS:
+        combat()
+    if (turtle_x, turtle_y) in BOSS:
+        combat()
+    if (turtle_x, turtle_y) in TOWN_LOCATIONS:
+        town()
+
+    if (turtle_x, turtle_y) in TREASURE_LOCATIONS:
+        if (' '.join([str(turtle_x),str(turtle_y)])) in trail:
+          print("Treasure doesn't grow on trees you know")
+        else:  
+          treasure()
+    if (turtle_x, turtle_y) in WEAPON_SHOPS:
+        Weapon_shop()
+        
+        
+        
